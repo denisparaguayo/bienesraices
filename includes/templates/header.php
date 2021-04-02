@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +8,7 @@
 </head>
 <body>
     
-    <header class="header">
+    <header class="header <?php echo $inicio ? 'inicio' :' '?>">
         <div class="contenedor contenido-header">
             <div class="barra">
                 <a href="index.php">
