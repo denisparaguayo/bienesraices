@@ -1,7 +1,7 @@
 <?php 
     require '../../includes/config/database.php';
 
-    conectarBB();
+    $bd = conectarBB();
 
     require '../../includes/funciones.php';
 
@@ -14,7 +14,7 @@
     
     <a href="/admin" class="boton boton-verde">Volver</a>
 
-    <form class="formulario">
+    <form class="formulario" method="$_POST" action="/admin/propiedades/crear.php">
         <fieldset>
             <legend>Información General</legend>
                 

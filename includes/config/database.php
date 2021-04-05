@@ -1,13 +1,14 @@
 <?php
 
-function conectarBB(){
+function conectarBB() : mysqli{
     $bd = mysqli_connect ('localhost','root','','bienes_raices');
 
-    if ($bd) {
-        echo "se conecto";
+    if (!$bd) {
+        echo "No se Puede Conectar";
+        exit;
     }
-     else{
-        echo "no se conecto";
-    }
+
+    return $bd;
+     
 }
 
