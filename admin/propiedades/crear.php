@@ -3,9 +3,22 @@ require '../../includes/config/database.php';
 
 $bd = conectarBB();
 
+//consultar para obtener los vendedores
+
+$consulta = "SELECT * FROM vendedores";
+$resultado = mysqli_query($bd, $consulta);
+
 //Arreglo con mensaje de errores
 
 $errores = [];
+
+    $titulo = '';
+    $precio = '';
+    $descripcion = '';
+    $habitaciones = '';
+    $wc = '';
+    $estacionamiento = '';
+    $vendedorId = '';
 
 
 
@@ -64,9 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo "Insertado Correctamente";
         }
     }
-    //echo "<pre>";
-    //var_dump($errores);
-    //echo "</pre>";
+
 
 
 
@@ -95,16 +106,16 @@ incluirTemplate('header');
             <legend>Información General</legend>
 
             <label for="titulo">Titulo:</label>
-            <input type="text" id="titulo" name="titulo" placeholder="Titulo de la Propiedad">
+            <input value="<?php echo $titulo ?>" type="text" id="titulo" name="titulo" placeholder="Titulo de la Propiedad">
 
             <label for="precio">Precio:</label>
-            <input type="number" id="precio" name="precio" placeholder="Precio de la Propiedad">
+            <input value="<?php echo $precio ?>" type="number" id="precio" name="precio" placeholder="Precio de la Propiedad">
 
             <label for="imagen">Imagen:</label>
-            <input type="file" id="imagen" accept="image/jpeg, image/png">
+            <input  type="file" id="imagen" accept="image/jpeg, image/png">
 
             <label for="descripcion">descripción:</label>
-            <textarea name="descripcion" id="descripcion"></textarea>
+            <textarea name="descripcion" id="descripcion"><?php echo $descripcion ?></textarea>
 
         </fieldset>
 
@@ -112,13 +123,13 @@ incluirTemplate('header');
             <legend>Información de la Propiedad</legend>
 
             <label for="habitaciones">Habitacion:</label>
-            <input type="number" id="habitaciones" name="habitaciones" min="1" max="9">
+            <input value="<?php echo $habitaciones ?>" type="number" id="habitaciones" name="habitaciones" min="1" max="9">
 
             <label for="wc">Baños:</label>
-            <input type="number" id="wc" name="wc" min="1" max="9">
+            <input value="<?php echo $wc ?>" type="number" id="wc" name="wc" min="1" max="9">
 
             <label for="estacionamiento">Estacionamiento:</label>
-            <input type="number" id="estacionamiento" name="estacionamiento" min="1" max="9">
+            <input value="<?php echo $estacionamiento ?>" type="number" id="estacionamiento" name="estacionamiento" min="1" max="9">
 
 
         </fieldset>
@@ -126,13 +137,22 @@ incluirTemplate('header');
         <fieldset>
             <legend>Vendedores</legend>
 
-            <select name="vendedor">
-                <option value="">-->Selecciona un Vendedor<--< /option>
-                <option value="1">Denis</option>
-                <option value="2">Tiky</option>
+            <select  name="vendedor" id="vendedor">
+               
+                <option value="" > --Selecciona-- </option>
+                
+                <?php while($vendedor = mysqli_fetch_assoc($resultado)) : ?>                
+                
+                    <option <?php echo $vendedorId === $vendedor['id'] ? 'selected' : ''; ?> value=" <?php echo $vendedor['id'];?>"> 
+                
+                    <?php echo $vendedor ['nombre'] . " " . $vendedor['apellido']; ?> </option>
+
+                <?php endwhile; ?>    
             </select>
 
-        </fieldset>
+            
+
+        </fieldset> 
 
 
         <input type="submit" value="Crear Propiedad" class="boton boton-verde">
