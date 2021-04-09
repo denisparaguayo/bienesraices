@@ -1,6 +1,7 @@
 @include tablet {
     .contenedor-anuncios {
         @include grid(3, 2rem);
+       
     }
 }
 
@@ -9,8 +10,13 @@
     border: 1px solid darken($gris, 10);
     margin-bottom: 2rem;
 
+    img{
+        width: 100%;
+    }
+
     .contenido-anuncio {
         padding: 2rem;
+        text-align: center;
     }
 
     h3, p {

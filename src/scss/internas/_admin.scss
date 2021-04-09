@@ -8,4 +8,48 @@
     &.error{
         background-color: $rojo;
     }
+
+    &.exito{
+        
+        background: rgb(51,51,51);
+        background: radial-gradient(circle, rgba(51,51,51,1) 46%, rgba(252,252,252,1) 71%);
+        color: $verde;
+    }
+}
+
+
+table.propiedades{
+
+    margin-top: 4rem;
+    width: 100%;
+    border-spacing: 0;
+    text-align: center;
+    
+    
+    
+
+    thead{
+        background-color: $grisOscuro;
+
+        th{
+            color: $blanco;
+            padding: 1rem;
+            
+        }
+
+        
+    }
+    
+
+    .imagen-tabla{
+        width: 10rem;
+    }
+}
+
+td{
+    border-bottom: 2px dashed   $grisOscuro;
+}
+.imagen-actualizar{
+    width: 15rem;
+    border-radius: 20%;
 }

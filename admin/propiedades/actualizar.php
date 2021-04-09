@@ -1,7 +1,30 @@
 <?php
+
+    // echo"<pre>";
+    // var_dump($_GET);
+    // echo"</pre>";
+
+// validar por Id valido
+$id = $_GET['id'];
+$id = filter_var($id, FILTER_VALIDATE_INT);
+// var_dump($id);
+
+if(!$id){
+    header('location: /admin');
+}
+
 require '../../includes/config/database.php';
 
 $bd = conectarBB();
+
+//consultar para obtener los datos de la propiedad
+$consulta = "SELECT * FROM propiedades WHERE id = ${id}";
+$resultado = mysqli_query($bd, $consulta);
+$propiedad = mysqli_fetch_assoc($resultado);
+
+//   echo"<pre>";
+//     var_dump($propiedad);
+//     echo"</pre>";
 
 //consultar para obtener los vendedores
 
@@ -12,13 +35,14 @@ $resultado = mysqli_query($bd, $consulta);
 
 $errores = [];
 
-    $titulo = '';
-    $precio = '';
-    $descripcion = '';
-    $habitaciones = '';
-    $wc = '';
-    $estacionamiento = '';
-    $vendedorId = '';
+    $titulo = $propiedad['titulo'];
+    $precio = $propiedad['precio'];
+    $descripcion = $propiedad['descripcion'];
+    $habitaciones = $propiedad['habitaciones'];
+    $wc = $propiedad['wc'];
+    $estacionamiento = $propiedad['estacionamiento'];
+    $vendedorId = $propiedad['vendedorId'];
+    $imagenPropiedad = $propiedad['imagen'];
 
 
 
@@ -55,72 +79,86 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
 
     if (!$titulo) {
-        $errores[] = "Debes agregar un Titulo de Propiedad &#9888;";
+        $errores[] = "Debes agregar un Titulo de Propiedad";
     }
 
     if (!$precio) {
-        $errores[] = "Debes agregar un Precio a la  Propiedad &#9888;";
+        $errores[] = "Debes agregar un Precio a la  Propiedad";
     }
 
     if (strlen($descripcion) < 50) {
-        $errores[] = "La Descripcion es Obligatoria y debe tenes como mínimo 50 caracteres &#9888;";
+        $errores[] = "La Descripcion es Obligatoria y debe tenes como mínimo 50 caracteres";
     }
 
     if (!$habitaciones) {
-        $errores[] = "Debes agregar la cantidad de Habitaciones &#9888;";
+        $errores[] = "Debes agregar la cantidad de Habitaciones";
     }
 
     if (!$wc) {
-        $errores[] = "Debes agregar la cantidad de BaÑOs &#9888;";
+        $errores[] = "Debes agregar la cantidad de BaÑOs";
     }
 
     if (!$estacionamiento) {
-        $errores[] = "Debes agregar los lugares de estacionamiento &#9888;";
+        $errores[] = "Debes agregar los lugares de estacionamiento";
     }
 
     if (!$vendedorId) {
-        $errores[] = "Debes seleccionar un Vendedor &#9888;";
+        $errores[] = "Debes seleccionar un Vendedor";
     }
 
-    if(!$imagen['name'] || $imagen['error']){
-        $errores[] = 'La Imagen es Obligatoria &#9888;';
-    }
+    // if(!$imagen['name'] || $imagen['error']){
+    //     $errores[] = 'La Imagen es Obligatoria';
+    // }
 
     //validar por peso 100 kb
 
     $medida = 1000 * 1000;
 
     if($imagen['size'] > $medida){
-        $errores[] = 'La imagen es muy pesada &#9888;';
+        $errores[] = 'La imagen es muy pesada';
     }
 
 
     if (empty($errores)) {
 
-
-        /* SUBIDA DE ARCHIVO IMAGEN */
-
-        /*Crear carpeta imagen*/
+        //Crear carpeta imagen
 
         $carpetaImagen = '../../imagenes/';
 
-        if(!is_dir($carpetaImagen)){
-            mkdir($carpetaImagen);
-        }
+         if(!is_dir($carpetaImagen)){
+             mkdir($carpetaImagen);
+         }
 
-        //generar un nombre único
+        $nombreImagen = '';
 
-        $nombreImagen = md5( uniqid( rand(). true)) . ".jpg";
+        // /* SUBIDA DE ARCHIVO IMAGEN */
 
-        //subir la imagen
+        if( $imagen ['name'] ){
 
-        move_uploaded_file($imagen['tmp_name'], $carpetaImagen . $nombreImagen);
+            //eliminar imagen previa
+            unlink($carpetaImagen . $propiedad['imagen']);
+
+            // //generar un nombre único
+            $nombreImagen = md5( uniqid( rand(). true)) . ".jpg";
+
+            // //subir la imagen 
+            move_uploaded_file($imagen['tmp_name'], $carpetaImagen . $nombreImagen);            
+
+        } else{
+            $nombreImagen = $propiedad['imagen'];
+        }       
+
+        
 
         
 
         // Insertar en la base de datos
 
-        $query = "INSERT INTO propiedades (titulo, precio, imagen, descripcion, habitaciones, wc, estacionamiento, creado, vendedorId) VAlUES ('$titulo', '$precio', '$nombreImagen', '$descripcion', '$habitaciones', '$wc', '$estacionamiento', '$creado', '$vendedorId')";
+        $query = "UPDATE propiedades SET titulo = '${titulo}', precio = ${precio}, imagen = '${nombreImagen}', descripcion = '${descripcion}', habitaciones = ${habitaciones}, wc = ${wc}, estacionamiento = ${estacionamiento}, vendedorId = ${vendedorId} WHERE id = ${id} ";
+
+        // echo($query);
+
+        // exit;
 
 
         $resultado = mysqli_query($bd, $query);
@@ -128,7 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($resultado) {
            //redireccionar al usuario después de que se valido su entrada
 
-            header('Location: /admin?resultado=1');
+            header('Location: /admin?resultado=2');
 
         }
     }
@@ -146,7 +184,7 @@ incluirTemplate('header');
 
 <main class="contenedor seccion">
 
-    <h1>Crear Propiedad</h1>
+<h1>Actualizar Propiedad</h1>
     <a href="/admin" class="boton boton-verde">Volver</a>
 
     <?php foreach($errores as $error): ?>
@@ -156,7 +194,7 @@ incluirTemplate('header');
     
     <?php endforeach; ?>
 
-    <form class="formulario" method="POST" action="/admin/propiedades/crear.php" enctype="multipart/form-data">
+    <form class="formulario" method="POST" enctype="multipart/form-data">
         <fieldset>
             <legend>Información General</legend>
 
@@ -168,7 +206,9 @@ incluirTemplate('header');
 
             <label for="imagen">Imagen:</label>
             <input  type="file" id="imagen" accept="image/jpeg, image/png" name="imagen">
-
+           
+            <img class="imagen-actualizar" src="/imagenes/<?php echo $imagenPropiedad; ?>" alt="">
+           
             <label for="descripcion">descripción:</label>
             <textarea name="descripcion" id="descripcion"><?php echo $descripcion ?></textarea>
 
@@ -210,7 +250,7 @@ incluirTemplate('header');
         </fieldset> 
 
 
-        <input type="submit" value="Crear Propiedad" class="boton boton-verde">
+        <input type="submit" value="Actualizar Propiedad" class="boton boton-verde">
     </form>
 
 
