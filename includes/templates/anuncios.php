@@ -30,7 +30,7 @@ $resultado = mysqli_query($bd, $query);
                 <div class="contenido-anuncio">
                     <h3><?php echo $propiedad['titulo']?></h3>
                     <p><?php echo $propiedad['descripcion']?></p>
-                    <p class="precio">$<?php echo $propiedad['precio']?></p>
+                    <p class="precio-verde">$<?php echo $propiedad['precio']?></p>
 
                     <ul class="iconos-caracteristicas">
                         <li>
@@ -47,7 +47,7 @@ $resultado = mysqli_query($bd, $query);
                         </li>
                     </ul>
 
-                    <a href="anuncio.php" class="boton-amarillo-block">
+                    <a href="anuncio.php?id=<?php echo $propiedad['id']?>" class="boton-amarillo-block">
                         Ver Propiedad
                     </a>
                 </div><!--.contenido-anuncio-->

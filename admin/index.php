@@ -89,10 +89,10 @@
                     <td>
                         <form method="POST" class="w-100">
                             <input type="hidden" name="id" value="<?php echo $propiedad['id']; ?>">
-                            <input type="submit" class="boton boton-rojo-block" value="Eliminar" id="">
-
-                        </form>
+                            <input type="submit" class="boton boton-rojo-block"  value="Eliminar" id="">
+                            </form>
                         <a href="/admin/propiedades/actualizar.php?id=<?php echo $propiedad['id'];?>" class="boton-amarillo-block">Actualizar</a>
+                        
                     </td>
 
                 </tr>
@@ -101,7 +101,7 @@
         
         </table>
     </main>
-
+              
     <?php
         //cerrar la conexión
         mysqli_close($bd);

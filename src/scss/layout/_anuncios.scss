@@ -1,7 +1,11 @@
 @include tablet {
-    .contenedor-anuncios {
-        @include grid(3, 2rem);
-       
+    .contenedor-anuncios{
+        display: grid;
+        grid-template-columns: minmax(0, auto) minmax(0, auto) minmax(0, auto);
+        grid-template-rows: minmax(0, auto);
+        gap: 1rem;
+        
+        
     }
 }
 
@@ -9,25 +13,29 @@
     background-color: lighten($gris, 5);
     border: 1px solid darken($gris, 10);
     margin-bottom: 2rem;
+   
 
-    img{
-        width: 100%;
-    }
-
+    
     .contenido-anuncio {
         padding: 2rem;
         text-align: center;
+        
+        word-wrap: break-word;
+       
     }
 
     h3, p {
+        
         margin: 0;
+        
     }
  
-}
-.precio {
-    color: $verde;
-    font-weight: $bold;
-    font-size: 3rem;
+    .precio-verde {
+        display: flex;
+        color: $verde;
+        font-weight: $bold;
+        font-size: 3rem;
+    }
 }
 
 .iconos-caracteristicas {
