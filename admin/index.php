@@ -1,9 +1,11 @@
 <?php 
-
-    // echo "<pre>";
-    // var_dump($_POST);
-    // echo "</pre>";
-
+    
+    
+    require '../includes/funciones.php';
+    $auth = estaAutenticado();
+    if(!$auth){
+        header('Location: /');
+    }
     
     //Importar la base de datos
     require '../includes/config/database.php';
@@ -49,9 +51,7 @@
     }
 
     //Agrega un Template
-    require '../includes/funciones.php';
-
-     incluirTemplate('header');
+    incluirTemplate('header');
 
 ?>
     <main class="contenedor seccion">

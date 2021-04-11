@@ -1,8 +1,10 @@
 <?php
 
-    // echo"<pre>";
-    // var_dump($_GET);
-    // echo"</pre>";
+require '../../includes/funciones.php';
+$auth = estaAutenticado();
+if(!$auth){
+    header('Location: /');
+}
 
 // validar por Id valido
 $id = $_GET['id'];
@@ -176,7 +178,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 }
 
-require '../../includes/funciones.php';
+
 
 incluirTemplate('header');
 

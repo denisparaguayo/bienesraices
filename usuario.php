@@ -1,7 +1,7 @@
 <?php 
 
 // importar la conexión
-require 'includes/config/database.php';
+require 'includes/app.php';
 $bd = conectarBB();
 
 

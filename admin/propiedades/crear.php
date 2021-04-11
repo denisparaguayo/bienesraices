@@ -1,4 +1,10 @@
 <?php
+require '../../includes/funciones.php';
+$auth = estaAutenticado();
+if (!$auth) {
+    header('Location: /');
+}
+
 require '../../includes/config/database.php';
 
 $bd = conectarBB();
@@ -12,13 +18,13 @@ $resultado = mysqli_query($bd, $consulta);
 
 $errores = [];
 
-    $titulo = '';
-    $precio = '';
-    $descripcion = '';
-    $habitaciones = '';
-    $wc = '';
-    $estacionamiento = '';
-    $vendedorId = '';
+$titulo = '';
+$precio = '';
+$descripcion = '';
+$habitaciones = '';
+$wc = '';
+$estacionamiento = '';
+$vendedorId = '';
 
 
 
@@ -27,11 +33,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     var_dump($_POST);
     echo "</pre>";*/
 
-     /*echo "<pre>";
+    /*echo "<pre>";
     var_dump($_FILES);
     echo "</pre>";*/
 
-   
+
 
     $titulo = mysqli_real_escape_string($bd, $_POST['titulo']);
     $precio = mysqli_real_escape_string($bd, $_POST['precio']);
@@ -52,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo "</pre>";*/
 
 
-    
+
 
     if (!$titulo) {
         $errores[] = "Debes agregar un Titulo de Propiedad &#9888;";
@@ -82,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errores[] = "Debes seleccionar un Vendedor &#9888;";
     }
 
-    if(!$imagen['name'] || $imagen['error']){
+    if (!$imagen['name'] || $imagen['error']) {
         $errores[] = 'La Imagen es Obligatoria &#9888;';
     }
 
@@ -90,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $medida = 1000 * 1000;
 
-    if($imagen['size'] > $medida){
+    if ($imagen['size'] > $medida) {
         $errores[] = 'La imagen es muy pesada &#9888;';
     }
 
@@ -104,19 +110,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $carpetaImagen = '../../imagenes/';
 
-        if(!is_dir($carpetaImagen)){
+        if (!is_dir($carpetaImagen)) {
             mkdir($carpetaImagen);
         }
 
         //generar un nombre único
 
-        $nombreImagen = md5( uniqid( rand(). true)) . ".jpg";
+        $nombreImagen = md5(uniqid(rand() . true)) . ".jpg";
 
         //subir la imagen
 
         move_uploaded_file($imagen['tmp_name'], $carpetaImagen . $nombreImagen);
 
-        
+
 
         // Insertar en la base de datos
 
@@ -126,19 +132,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $resultado = mysqli_query($bd, $query);
 
         if ($resultado) {
-           //redireccionar al usuario después de que se valido su entrada
+            //redireccionar al usuario después de que se valido su entrada
 
             header('Location: /admin?resultado=1');
-
         }
     }
-
-
-
-
 }
 
-require '../../includes/funciones.php';
+
 
 incluirTemplate('header');
 
@@ -149,11 +150,11 @@ incluirTemplate('header');
     <h1>Crear Propiedad</h1>
     <a href="/admin" class="boton boton-verde">Volver</a>
 
-    <?php foreach($errores as $error): ?>
+    <?php foreach ($errores as $error) : ?>
         <div class="alerta error">
-    <?php echo $error; ?>
+            <?php echo $error; ?>
         </div>
-    
+
     <?php endforeach; ?>
 
     <form class="formulario" method="POST" action="/admin/propiedades/crear.php" enctype="multipart/form-data">
@@ -167,7 +168,7 @@ incluirTemplate('header');
             <input value="<?php echo $precio ?>" type="number" id="precio" name="precio" placeholder="Precio de la Propiedad">
 
             <label for="imagen">Imagen:</label>
-            <input  type="file" id="imagen" accept="image/jpeg, image/png" name="imagen">
+            <input type="file" id="imagen" accept="image/jpeg, image/png" name="imagen">
 
             <label for="descripcion">descripción:</label>
             <textarea name="descripcion" id="descripcion"><?php echo $descripcion ?></textarea>
@@ -192,22 +193,22 @@ incluirTemplate('header');
         <fieldset>
             <legend>Vendedores</legend>
 
-            <select  name="vendedor">
-               
-                <option value="" > --Selecciona-- </option>
-                
-                <?php while($vendedor = mysqli_fetch_assoc($resultado)) { ?>                
-                
-                    <option <?php echo $vendedorId === $vendedor['id'] ? 'selected' : ''; ?> value="<?php echo $vendedor['id'];?>"> 
-                
-                    <?php echo $vendedor ['nombre'] . " " . $vendedor['apellido']; ?> </option>
+            <select name="vendedor">
 
-                <?php } ?>    
+                <option value=""> --Selecciona-- </option>
+
+                <?php while ($vendedor = mysqli_fetch_assoc($resultado)) { ?>
+
+                    <option <?php echo $vendedorId === $vendedor['id'] ? 'selected' : ''; ?> value="<?php echo $vendedor['id']; ?>">
+
+                        <?php echo $vendedor['nombre'] . " " . $vendedor['apellido']; ?> </option>
+
+                <?php } ?>
             </select>
 
-            
 
-        </fieldset> 
+
+        </fieldset>
 
 
         <input type="submit" value="Crear Propiedad" class="boton boton-verde">

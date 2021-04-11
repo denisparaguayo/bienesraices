@@ -9,8 +9,8 @@
     }
         //Importar la Conexion
 
-    require 'includes/config/database.php';
-
+    
+        require 'includes/app.php';
     $bd = conectarBB();
 
     //Consultar
@@ -30,7 +30,7 @@
 
 
 
-    require 'includes/funciones.php';
+    
 
      incluirTemplate('header');
 

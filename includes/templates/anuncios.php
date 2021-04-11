@@ -2,7 +2,6 @@
 
 //Importar la Conexion
 
-require __DIR__ . '/../config/database.php';
 
 $bd = conectarBB();
 
