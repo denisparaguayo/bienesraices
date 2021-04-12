@@ -17,7 +17,7 @@ $resultado = mysqli_query($bd, $consulta);
 
 //Arreglo con mensaje de errores
 
-$errores = [];
+$errores = Propiedad::getErrores();
 
 $titulo = '';
 $precio = '';
@@ -34,79 +34,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $propiedad = new Propiedad($_POST);
 
-    $propiedad -> guardar();
+    $errores = $propiedad->validar();
 
-
-
-    $titulo = mysqli_real_escape_string($bd, $_POST['titulo']);
-    $precio = mysqli_real_escape_string($bd, $_POST['precio']);
-    $descripcion = mysqli_real_escape_string($bd, $_POST['descripcion']);
-    $habitaciones = mysqli_real_escape_string($bd, $_POST['habitaciones']);
-    $wc = mysqli_real_escape_string($bd, $_POST['wc']);
-    $estacionamiento = mysqli_real_escape_string($bd, $_POST['estacionamiento']);
-    $vendedorId = mysqli_real_escape_string($bd, $_POST['vendedorId']);
-    $creado = date('Y/m/d');
-
-    //asignar imagen a una variable
-
-    $imagen = $_FILES['imagen'];
-
-
-    /*echo "<pre>";
-    var_dump($_FILES);
-    echo "</pre>";*/
-
-
-
-
-    if (!$titulo) {
-        $errores[] = "Debes agregar un Titulo de Propiedad &#9888;";
-    }
-
-    if (!$precio) {
-        $errores[] = "Debes agregar un Precio a la  Propiedad &#9888;";
-    }
-
-    if (strlen($descripcion) < 50) {
-        $errores[] = "La Descripcion es Obligatoria y debe tenes como mínimo 50 caracteres &#9888;";
-    }
-
-    if (!$habitaciones) {
-        $errores[] = "Debes agregar la cantidad de Habitaciones &#9888;";
-    }
-
-    if (!$wc) {
-        $errores[] = "Debes agregar la cantidad de BaÑOs &#9888;";
-    }
-
-    if (!$estacionamiento) {
-        $errores[] = "Debes agregar los lugares de estacionamiento &#9888;";
-    }
-
-    if (!$vendedorId) {
-        $errores[] = "Debes seleccionar un Vendedor &#9888;";
-    }
-
-    if (!$imagen['name'] || $imagen['error']) {
-        $errores[] = 'La Imagen es Obligatoria &#9888;';
-    }
-
-    //validar por peso 100 kb
-
-    $medida = 1000 * 1000;
-
-    if ($imagen['size'] > $medida) {
-        $errores[] = 'La imagen es muy pesada &#9888;';
-    }
-
-
+        
     if (empty($errores)) {
-
-
+        
+        $propiedad -> guardar();
+        
+        //asignar imagen a una variable
+        $imagen = $_FILES['imagen']; 
+        
         /* SUBIDA DE ARCHIVO IMAGEN */
-
         /*Crear carpeta imagen*/
-
+        
         $carpetaImagen = '../../imagenes/';
 
         if (!is_dir($carpetaImagen)) {
@@ -120,10 +60,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         //subir la imagen
 
         move_uploaded_file($imagen['tmp_name'], $carpetaImagen . $nombreImagen);
-
-                
-
-        
 
         if ($resultado) {
             //redireccionar al usuario después de que se valido su entrada

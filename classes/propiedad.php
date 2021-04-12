@@ -8,6 +8,12 @@ class Propiedad {
     protected static $bd;
     protected static $columnasDB = ['id','titulo', 'precio', 'imagen', 'descripcion', 'habitaciones', 'wc', 'estacionamiento', 'creado', 'vendedorId'];
 
+    //Errores
+
+    protected static $errores = [];
+
+
+
 
     public $id;
     public $titulo;
@@ -47,11 +53,15 @@ class Propiedad {
 
 
       // Insertar en la base de datos
-      $query = "INSERT INTO propiedades (titulo, precio, imagen, descripcion, habitaciones, wc, estacionamiento, creado, vendedorId) VAlUES ('$this->titulo', '$this->precio', '$this->imagen', '$this->descripcion', '$this->habitaciones', '$this->wc', '$this->estacionamiento', '$this->creado', '$this->vendedorId')";
+      $query = " INSERT INTO propiedades ( ";
+      $query .= join(', ', array_keys($atributos));
+      $query .= " ) VALUES (' ";
+      $query .= join("', '", array_values($atributos));
+      $query .= " ') ";
 
       $resultado = self::$bd->query($query);
 
-      debug($resultado);
+     
     }
 
     //identificar y unir los atributos de la bd
@@ -66,8 +76,60 @@ class Propiedad {
 
     public function sanitizarAtributos(){
         $atributos = $this->atributos();
-        debug($atributos);
+       $sanitizado = [];
+       foreach ($atributos as $key => $value){
+           $sanitizado[$key] = self::$bd->escape_string($value);
+       }
+       return $sanitizado;
     }
+
+    //Validación
+    public static function getErrores(){
+        return self::$errores;
+    }
+
+    public function validar(){
+        if (!$this->titulo) {
+            self::$errores[] = "Debes agregar un Titulo de Propiedad &#9888;";
+        }
+    
+        if (!$this->precio) {
+            self::$errores[] = "Debes agregar un Precio a la  Propiedad &#9888;";
+        }
+    
+        if (strlen($this->descripcion) < 50) {
+            self::$errores[] = "La Descripcion es Obligatoria y debe tenes como mínimo 50 caracteres &#9888;";
+        }
+    
+        if (!$this->habitaciones) {
+            self::$errores[] = "Debes agregar la cantidad de Habitaciones &#9888;";
+        }
+    
+        if (!$this->wc) {
+            self::$errores[] = "Debes agregar la cantidad de BaÑOs &#9888;";
+        }
+    
+        if (!$this->estacionamiento) {
+            self::$errores[] = "Debes agregar los lugares de estacionamiento &#9888;";
+        }
+    
+        if (!$this->vendedorId) {
+            self::$errores[] = "Debes seleccionar un Vendedor &#9888;";
+        }
+    
+        // if (!$this->imagen['name'] || $imagen['error']) {
+        //     self::$errores[] = 'La Imagen es Obligatoria &#9888;';
+        // } 
+
+        // //validar por peso 100 kb    
+        // $medida = 1000 * 1000;    
+        // if ($$this->imagen['size'] > $medida) {
+        //     self::$errores[] = 'La imagen es muy pesada &#9888;';
+        // }
+
+        return self::$errores;
+    }
+
 
 
 
