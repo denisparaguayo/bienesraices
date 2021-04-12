@@ -7,7 +7,9 @@
             "email": "72168757+denisparaguayo@users.noreply.github.com"
         }
     ],
-    "require": {},
+    "require": {
+        "intervention/image": "^2.5"
+    },
     "autoload": {"psr-4": {
         "App\\" : "./classes"
     }}

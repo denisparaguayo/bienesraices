@@ -2,12 +2,14 @@
 require '../../includes/app.php';
 
 use App\Propiedad;
+use Intervention\Image\ImageManagerStatic as Image;
 
 
-
+//*ESTA AUTENTICADO
 estaAutenticado();
 
 
+//!conectar a la BD
 $bd = conectarBB();
 
 //consultar para obtener los vendedores
@@ -31,39 +33,42 @@ $vendedorId = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
+        //*CREA UNA NUEVA INSTANCIA
+        $propiedad = new Propiedad($_POST);
+        /* SUBIDA DE ARCHIVO IMAGEN */             
+        
+        //!generar un nombre único
 
-    $propiedad = new Propiedad($_POST);
+        $nombreImagen = md5(uniqid(rand() . true)) . ".jpg";
 
-    $errores = $propiedad->validar();
+        //*Setea la Imagen
+        //*Realiza un rezise a la imagen con Intervention
+        if($_FILES['imagen']['tmp_name']){
+            $image = Image::make ($_FILES['imagen']['tmp_name']) -> fit (800,600);
+            $propiedad->setImagen($nombreImagen);
+        }
+        
+
+        //*Validar
+        $errores = $propiedad->validar();
 
         
     if (empty($errores)) {
         
-        $propiedad -> guardar();
-        
-        //asignar imagen a una variable
-        $imagen = $_FILES['imagen']; 
-        
-        /* SUBIDA DE ARCHIVO IMAGEN */
-        /*Crear carpeta imagen*/
-        
-        $carpetaImagen = '../../imagenes/';
-
-        if (!is_dir($carpetaImagen)) {
-            mkdir($carpetaImagen);
+        //Crear la Carpeta para subir imagenes
+        if(!is_dir(CARPETA_IMAGENES)){
+            mkdir(CARPETA_IMAGENES);
         }
-
-        //generar un nombre único
-
-        $nombreImagen = md5(uniqid(rand() . true)) . ".jpg";
-
-        //subir la imagen
-
-        move_uploaded_file($imagen['tmp_name'], $carpetaImagen . $nombreImagen);
-
+        
+        //Guarda la Imagen en el servidor
+        $image->save(CARPETA_IMAGENES . $nombreImagen);
+        
+        //Guarda en la Base de Datos
+        $resultado = $propiedad -> guardar();
+        
+        //*Mensaje de Exito 
         if ($resultado) {
             //redireccionar al usuario después de que se valido su entrada
-
             header('Location: /admin?resultado=1');
         }
     }
