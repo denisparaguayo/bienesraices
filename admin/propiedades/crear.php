@@ -1,11 +1,12 @@
 <?php
-require '../../includes/funciones.php';
-$auth = estaAutenticado();
-if (!$auth) {
-    header('Location: /');
-}
+require '../../includes/app.php';
 
-require '../../includes/config/database.php';
+use App\Propiedad;
+
+
+
+estaAutenticado();
+
 
 $bd = conectarBB();
 
@@ -29,13 +30,11 @@ $vendedorId = '';
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    /*echo "<pre>";
-    var_dump($_POST);
-    echo "</pre>";*/
+    
 
-    /*echo "<pre>";
-    var_dump($_FILES);
-    echo "</pre>";*/
+    $propiedad = new Propiedad($_POST);
+
+    $propiedad -> guardar();
 
 
 
@@ -45,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $habitaciones = mysqli_real_escape_string($bd, $_POST['habitaciones']);
     $wc = mysqli_real_escape_string($bd, $_POST['wc']);
     $estacionamiento = mysqli_real_escape_string($bd, $_POST['estacionamiento']);
-    $vendedorId = mysqli_real_escape_string($bd, $_POST['vendedor']);
+    $vendedorId = mysqli_real_escape_string($bd, $_POST['vendedorId']);
     $creado = date('Y/m/d');
 
     //asignar imagen a una variable
@@ -122,14 +121,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         move_uploaded_file($imagen['tmp_name'], $carpetaImagen . $nombreImagen);
 
+                
 
-
-        // Insertar en la base de datos
-
-        $query = "INSERT INTO propiedades (titulo, precio, imagen, descripcion, habitaciones, wc, estacionamiento, creado, vendedorId) VAlUES ('$titulo', '$precio', '$nombreImagen', '$descripcion', '$habitaciones', '$wc', '$estacionamiento', '$creado', '$vendedorId')";
-
-
-        $resultado = mysqli_query($bd, $query);
+        
 
         if ($resultado) {
             //redireccionar al usuario después de que se valido su entrada
@@ -193,7 +187,7 @@ incluirTemplate('header');
         <fieldset>
             <legend>Vendedores</legend>
 
-            <select name="vendedor">
+            <select name="vendedorId">
 
                 <option value=""> --Selecciona-- </option>
 

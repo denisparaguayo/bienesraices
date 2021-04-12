@@ -38,16 +38,14 @@ $auth = $_SESSION['login'] ?? null;
                         <a href="/nosotros.php">Nosotros</a>
                         <a href="/anuncios.php">Anuncios</a>
                         <a href="/blog.php">Blog</a>
-                        <a href="/contacto.php">Contacto</a>
-                        
+                        <a href="/contacto.php">Contacto</a>                        
                         <?php if(!$auth) : ?>
                         <a href="/login.php">Iniciar Sesión</a>;
-                        <?php endif; ?>
-                        
+                        <?php endif; ?>                        
                         <?php if($auth) : ?>
-                        <a href="/cerrar-sesion.php">Cerrar Sesión</a>;
-                        <?php endif; ?>
-                        
+                        <a href="/admin">Crear</a>;
+                        <a  href="/cerrar-sesion.php">Cerrar Sesión</a>;
+                        <?php endif; ?>                        
                     </nav>
                 </div>
                 
