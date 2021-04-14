@@ -25,3 +25,9 @@ function debug($variable){
     echo "</pre>";
     exit;
 }
+
+//Escapa el HTML
+function s($html) : string {
+    $s = htmlspecialchars($html);
+    return $s;
+}
