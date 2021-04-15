@@ -31,8 +31,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
         //*CREA UNA NUEVA INSTANCIA
         $propiedad = new Propiedad($_POST['propiedad']);
-        /* SUBIDA DE ARCHIVO IMAGEN */             
-        
+
+        $propiedad->guardar();
+
+        /* SUBIDA DE ARCHIVO IMAGEN */         
         //!generar un nombre único
         $nombreImagen = md5(uniqid(rand() . true)) . ".jpg";
 

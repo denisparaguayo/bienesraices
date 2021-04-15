@@ -86,15 +86,15 @@
 
         <?php endforeach;?>
 
-        <form method="POST" class="formulario">
+        <form method="POST" class="formulario" autocomplete="off">
             <fieldset>
                 <legend>Email y Password</legend>
 
-                <label for="email">E-mail</label>
-                <input type="email" name="email" placeholder="Tu Email" >
+                <label for="email" >E-mail</label>
+                <input type="email" name="email" placeholder="Tu Email" autocomplete="off" >
 
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Tu Password">
+                <input type="password" id="password" name="password" placeholder="Tu Password" autocomplete="off">
 
             </fieldset>
             <input type="submit" value="Iniciar Sesión" class="boton boton-verde">

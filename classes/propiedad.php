@@ -79,9 +79,23 @@ class Propiedad
         $atributos = $this->sanitizarAtributos();
 
         $valores = [];
+
         foreach($atributos as $key => $value){
             
+            $valores [] = "{$key}='{$value}'";            
         }
+
+        $query = "UPDATE propiedades SET ";
+        $query .= join(', ', $valores );
+        $query .= " WHERE id = '" . self::$bd->escape_string($this->id) . "' ";
+        $query .= " LIMIT 1";
+    
+        $resultado = self::$bd->query($query);
+        return $resultado;
+        if ($resultado) {
+            //redireccionar al usuario después de que se valido su entrada
+             header('Location: /admin?resultado=2');
+         }
     }
 
     //identificar y unir los atributos de la bd
@@ -115,8 +129,6 @@ class Propiedad
                 unlink(CARPETA_IMAGENES . $this->imagen);
             }
         }
-
-
         //Asignar al Atributo el nombre de la Imagen
         if ($imagen) {
             $this->imagen = $imagen;

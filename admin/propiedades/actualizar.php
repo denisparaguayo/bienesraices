@@ -4,7 +4,7 @@ use App\Propiedad;
 use Intervention\Image\ImageManagerStatic as Image;
 
 require '../../includes/app.php';
- estaAutenticado();
+estaAutenticado();
 
 
 // validar por Id valido
@@ -12,7 +12,7 @@ $id = $_GET['id'];
 $id = filter_var($id, FILTER_VALIDATE_INT);
 // var_dump($id);
 
-if(!$id){
+if (!$id) {
     header('location: /admin');
 }
 
@@ -32,7 +32,7 @@ $errores = Propiedad::getErrores();
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-   
+
     //Asignar los Atributos
     $argc = $_POST['propiedad'];
 
@@ -41,45 +41,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Validación 
     $errores = $propiedad->validar();
 
-     //!generar un nombre único
-     $nombreImagen = md5(uniqid(rand() . true)) . ".jpg";
+    //!generar un nombre único
+    $nombreImagen = md5(uniqid(rand() . true)) . ".jpg";
 
     //Subida de Archivo
-    if($_FILES['propiedad']['tmp_name']['imagen']){
-    $image = Image::make ($_FILES['propiedad']['tmp_name']['imagen']) -> fit (800,600);
-    $propiedad->setImagen($nombreImagen);
+    if ($_FILES['propiedad']['tmp_name']['imagen']) {
+        $image = Image::make($_FILES['propiedad']['tmp_name']['imagen'])->fit(800, 600);
+        $propiedad->setImagen($nombreImagen);
     }
 
 
     if (empty($errores)) {
-        
+        //Almacenar la Imagen
+        $image->save(CARPETA_IMAGENES . $nombreImagen);
+
+
         $propiedad->guardar();
-        
-        // Insertar en la base de datos
-
-        $query = "UPDATE propiedades SET titulo = '${titulo}', precio = ${precio}, imagen = '${nombreImagen}', descripcion = '${descripcion}', habitaciones = ${habitaciones}, wc = ${wc}, estacionamiento = ${estacionamiento}, vendedorId = ${vendedorId} WHERE id = ${id} ";
-
-        // echo($query);
-
-        // exit;
-
-
-        $resultado = mysqli_query($bd, $query);
-
-        if ($resultado) {
-           //redireccionar al usuario después de que se valido su entrada
-
-            header('Location: /admin?resultado=2');
-
-        }
     }
-
-
-
-
 }
-
-
 
 incluirTemplate('header');
 
@@ -87,18 +66,18 @@ incluirTemplate('header');
 
 <main class="contenedor seccion">
 
-<h1>Actualizar Propiedad</h1>
+    <h1>Actualizar Propiedad</h1>
     <a href="/admin" class="boton boton-verde">Volver</a>
 
-    <?php foreach($errores as $error): ?>
+    <?php foreach ($errores as $error) : ?>
         <div class="alerta error">
-    <?php echo $error; ?>
+            <?php echo $error; ?>
         </div>
-    
+
     <?php endforeach; ?>
 
     <form class="formulario" method="POST" enctype="multipart/form-data">
-        
+
         <?php include '../../includes/templates/formularios_propiedades.php' ?>
 
 
