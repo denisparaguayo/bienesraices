@@ -61,10 +61,8 @@ class ActiveRecord{
         $atributos = $this->sanitizarAtributos();
 
         $valores = [];
-
-        foreach($atributos as $key => $value){
-            
-            $valores [] = "{$key}='{$value}'";            
+        foreach($atributos as $key => $value){            
+            $valores[] = "{$key}='{$value}'";            
         }
 
         $query = " UPDATE " . static::$tabla . " SET ";
@@ -73,9 +71,7 @@ class ActiveRecord{
         $query .= " LIMIT 1"; 
 
         $resultado = self::$bd->query($query);
-        
-        return $resultado;
-      
+                      
         if ($resultado) {
             //redireccionar al usuario después de que se valido su entrada
              header('Location: /admin?resultado=2');

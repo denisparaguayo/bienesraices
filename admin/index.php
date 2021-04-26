@@ -51,14 +51,14 @@
 ?>
     <main class="contenedor seccion">
         <h1>Administrador de Propiedades</h1>
-    <?php if($resultado =='1') :  ?>
-        <p class="alerta exito">Anuncio creado Exitosamente &#x2714; </p>
-    <?php elseif($resultado =='2') : ?>  
-        <p class="alerta exito">Anuncio Actualizado Exitosamente &#x2714; </p>
-    <?php elseif($resultado =='3') : ?>  
-        <p class="alerta exito">Anuncio Eliminado Exitosamente &#x2714; </p>  
-    <?php endif; ?>
-
+    <?php 
+    
+        $mensaje = mostrarNofiticaion(intval($resultado));
+        
+        if($mensaje) { ?>
+        <p class="alerta exito"><?php echo s($mensaje)?> &#128504;</p>
+    <?php }?>
+    
 
         <a href="/admin/propiedades/crear.php" class="boton boton-azul">Crear Nueva Propiedad &#10035;</a>
         <a href="/admin/vendedores/crear.php" class="boton boton-amarillo">Nuevo Vendedor &#10035;</a>

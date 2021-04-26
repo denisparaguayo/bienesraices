@@ -19,6 +19,7 @@
         "separacion",
         "sesion",
         "tablet",
-        "telefono"
+        "telefono",
+        "validacion"
     ]
 }

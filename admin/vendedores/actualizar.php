@@ -1,12 +1,22 @@
 <?php
 require '../../includes/app.php';
-
 use App\Vendedor;
-
-//*ESTA AUTENTICADO
+//ESTA AUTENTICADO
 estaAutenticado();
 
-$vendedor = new Vendedor;
+
+//Validar que sea ID valido
+
+$id = $_GET['id'];
+$id = filter_var($id, FILTER_VALIDATE_INT);
+
+if(!$id){
+    header('Location: /admin');
+}
+
+//Obtener el Arreglo del vendedor
+$vendedor = Vendedor::find($id);
+
 
 //Arreglo con mensaje de errores
 $errores = Vendedor::getErrores();
@@ -14,6 +24,22 @@ $errores = Vendedor::getErrores();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
+    //asignar los Valores
+    $argc = $_POST['vendedor'];
+    
+    //Sincronizar Objeto en Memoria con los que el usuario escribió
+    $vendedor->sincronizar($argc);
+    
+    //validacion
+
+    $errores = $vendedor->validar();
+
+    if(empty($errores)){
+
+        $vendedor->guardar();
+
+        debug($vendedor);
+    }
 
 }
 
