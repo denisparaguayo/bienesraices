@@ -2,7 +2,7 @@
 require '../../includes/app.php';
 
 use App\Propiedad;
-use App\vendedor;
+use App\Vendedor;
 use Intervention\Image\ImageManagerStatic as Image;
 
 //*ESTA AUTENTICADO
