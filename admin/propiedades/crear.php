@@ -2,55 +2,46 @@
 require '../../includes/app.php';
 
 use App\Propiedad;
+use App\vendedor;
 use Intervention\Image\ImageManagerStatic as Image;
-
 
 //*ESTA AUTENTICADO
 estaAutenticado();
 
-
-//!conectar a la BD
-$bd = conectarBB();
-
 $propiedad = new Propiedad;
 
-//consultar para obtener los vendedores
+//Consulta Para obtener todos los vendedores
+$vendedores = Vendedor::all();
 
-$consulta = "SELECT * FROM vendedores";
-$resultado = mysqli_query($bd, $consulta);
 
 //Arreglo con mensaje de errores
-
 $errores = Propiedad::getErrores();
 
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {    
     
     
-        //*CREA UNA NUEVA INSTANCIA
-        $propiedad = new Propiedad($_POST['propiedad']);
-
-        $propiedad->guardar();
-
-        /* SUBIDA DE ARCHIVO IMAGEN */         
-        //!generar un nombre único
-        $nombreImagen = md5(uniqid(rand() . true)) . ".jpg";
-
-        //*Setea la Imagen
-        //*Realiza un rezise a la imagen con Intervention
-        if($_FILES['propiedad']['tmp_name']['imagen']){
-            $image = Image::make ($_FILES['propiedad']['tmp_name']['imagen']) -> fit (800,600);
-            $propiedad->setImagen($nombreImagen);
-        }
-        
-
-        //*Validar
-        $errores = $propiedad->validar();
-
+    //*CREA UNA NUEVA INSTANCIA
+    $propiedad = new Propiedad($_POST['propiedad']);
+    
+         
+    /* SUBIDA DE ARCHIVO IMAGEN */         
+    //!generar un nombre único
+    $nombreImagen = md5(uniqid(rand() . true)) . ".jpg";
+    
+    //*Setea la Imagen
+    //*Realiza un rezise a la imagen con Intervention
+    if($_FILES['propiedad']['tmp_name']['imagen']){
+        $image = Image::make ($_FILES['propiedad']['tmp_name']['imagen']) -> fit (800,600);
+        $propiedad->setImagen($nombreImagen);
+    }
+    
+    //*Validar
+    $errores = $propiedad->validar();
+    
         
     if (empty($errores)) {
+        
         
         //Crear la Carpeta para subir imagenes
         if(!is_dir(CARPETA_IMAGENES)){
@@ -61,13 +52,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $image->save(CARPETA_IMAGENES . $nombreImagen);
         
         //Guarda en la Base de Datos
-        $resultado = $propiedad -> guardar();
         
-        //*Mensaje de Exito 
-        if ($resultado) {
-            //redireccionar al usuario después de que se valido su entrada
-            header('Location: /admin?resultado=1');
-        }
+        $propiedad -> guardar();
     }
 }
 

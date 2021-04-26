@@ -9,7 +9,7 @@ require __DIR__ . '/../vendor/autoload.php';
 
 $bd = conectarBB();
 
-use App\Propiedad;
+use App\ActiveRecord;
 
-Propiedad::setBD($bd);
+ActiveRecord::setBD($bd);
 

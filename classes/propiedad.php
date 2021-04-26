@@ -2,20 +2,12 @@
 
 namespace App;
 
-use finfo;
 
-class Propiedad
-{
 
-    //BAse de datos
-    protected static $bd;
+class Propiedad extends ActiveRecord{
+
+    protected static $tabla = 'propiedades';
     protected static $columnasDB = ['id', 'titulo', 'precio', 'imagen', 'descripcion', 'habitaciones', 'wc', 'estacionamiento', 'creado', 'vendedorId'];
-
-    //Errores
-
-    protected static $errores = [];
-
-
     public $id;
     public $titulo;
     public $precio;
@@ -27,15 +19,9 @@ class Propiedad
     public $creado;
     public $vendedorId;
 
-    //definir la conexión  la BD
-    public static function setBD($database)
-    {
-        self::$bd = $database;
-    }
-
     public function __construct($argc = [])
     {
-        $this->id = $argc['id'] ?? '';
+        $this->id = $argc['id'] ?? null;
         $this->titulo = $argc['titulo'] ?? '';
         $this->precio = $argc['precio'] ?? '';
         $this->imagen = $argc['imagen'] ?? '';
@@ -44,101 +30,7 @@ class Propiedad
         $this->wc = $argc['wc'] ?? '';
         $this->estacionamiento = $argc['estacionamiento'] ?? '';
         $this->creado = date('Y/m/d');
-        $this->vendedorId = $argc['vendedorId'] ?? 1;
-    }
-
-    public function guardar(){
-        if(isset($this->id)){
-            //ACtualizar
-            $this->actualizar();
-        } else{
-            //crear nuevo registro
-            $this->crear();
-        }
-
-    }
-
-    public function crear(){
-
-        //sanitizar los datos
-        $atributos = $this->sanitizarAtributos();
-
-        // Insertar en la base de datos
-        $query = " INSERT INTO propiedades ( ";
-        $query .= join(', ', array_keys($atributos));
-        $query .= " ) VALUES (' ";
-        $query .= join("', '", array_values($atributos));
-        $query .= " ') ";
-
-        $resultado = self::$bd->query($query);
-        return $resultado;
-    }
-
-    public function actualizar(){
-        //sanitizar los datos
-        $atributos = $this->sanitizarAtributos();
-
-        $valores = [];
-
-        foreach($atributos as $key => $value){
-            
-            $valores [] = "{$key}='{$value}'";            
-        }
-
-        $query = "UPDATE propiedades SET ";
-        $query .= join(', ', $valores );
-        $query .= " WHERE id = '" . self::$bd->escape_string($this->id) . "' ";
-        $query .= " LIMIT 1";
-    
-        $resultado = self::$bd->query($query);
-        return $resultado;
-        if ($resultado) {
-            //redireccionar al usuario después de que se valido su entrada
-             header('Location: /admin?resultado=2');
-         }
-    }
-
-    //identificar y unir los atributos de la bd
-    public function atributos()
-    {
-        $atributos = [];
-        foreach (self::$columnasDB as $columna) {
-            if ($columna === 'id') continue;
-            $atributos[$columna] = $this->$columna;
-        }
-        return $atributos;
-    }
-
-    public function sanitizarAtributos()
-    {
-        $atributos = $this->atributos();
-        $sanitizado = [];
-        foreach ($atributos as $key => $value) {
-            $sanitizado[$key] = self::$bd->escape_string($value);
-        }
-        return $sanitizado;
-    }
-
-    // Subida de Archivos
-    public function setImagen($imagen){
-        //Elimina la Imagen Previa si no hay ID
-        if (isset($this->id)) {
-            //comprobar si existe el archivo
-            $existeArchivo = file_exists(CARPETA_IMAGENES . $this->imagen);
-            if($existeArchivo){
-                unlink(CARPETA_IMAGENES . $this->imagen);
-            }
-        }
-        //Asignar al Atributo el nombre de la Imagen
-        if ($imagen) {
-            $this->imagen = $imagen;
-        }
-    }
-
-    //Validación
-    public static function getErrores()
-    {
-        return self::$errores;
+        $this->vendedorId = $argc['vendedorId'] ?? '';
     }
 
     public function validar()
@@ -172,69 +64,10 @@ class Propiedad
         }
 
         if (!$this->imagen) {
-            self::$errores[] = 'La Imagen es Obligatoria &#9888;';
+            self::$errores[] = 'La Imagen de la Propiedad es Obligatoria &#9888;';
         }      
 
         return self::$errores;
     }
-
-    //Lista Todas los Registros
-    public static function all(){
-        
-        $query = "SELECT * FROM propiedades";
-        $resultado = self::consultarSQL($query);
-        return $resultado;
-        
-    }
-
-    //Busca un Registro por su ID
-
-    public static function find($id){
-        $query = "SELECT * FROM propiedades WHERE id = ${id}";
-
-        $resultado = self::consultarSQL($query);
-
-        return array_shift ( $resultado );
-    }
-
-    public static function consultarSQL($query){
-        //Consultar la Base de Datos
-        $resultado = self::$bd->query($query);
-
-        //Recorrer los Resultados
-        $array = [];
-        while($registro = $resultado->fetch_assoc()){
-            $array [] = self::crearObjeto($registro);
-        }
-        
-        //Liberar la Memoria
-        $resultado->free();
-
-        //Retornar los Resultados
-        return $array;
-
-    }
-
-    public static function crearObjeto($registro){
-        $objeto = new self;
-        foreach($registro as $key=> $value){
-            if(property_exists($objeto, $key)){
-                $objeto->$key = $value;
-            }
-        }
-
-        return $objeto;
-    }
-
-    // sincroniza el objeto en memoria con los cambios realizado por el usuario
-
-    public function sincronizar($argc = []){
-        foreach ($argc as $key => $value){
-            if (property_exists ($this, $key ) && !is_null($value) ){
-                
-                $this-> $key = $value;
-
-            }
-        }
-    }
+    
 }

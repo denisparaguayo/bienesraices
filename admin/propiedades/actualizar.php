@@ -1,16 +1,17 @@
 <?php
 
-use App\Propiedad;
-use Intervention\Image\ImageManagerStatic as Image;
 
 require '../../includes/app.php';
 estaAutenticado();
 
+use App\Propiedad;
+use App\vendedor;
+use Intervention\Image\ImageManagerStatic as Image;
 
 // validar por Id valido
 $id = $_GET['id'];
 $id = filter_var($id, FILTER_VALIDATE_INT);
-// var_dump($id);
+
 
 if (!$id) {
     header('location: /admin');
@@ -19,15 +20,10 @@ if (!$id) {
 //consultar para obtener los datos de la propiedad
 $propiedad = Propiedad::find($id);
 
-
-
-//consultar para obtener los vendedores
-
-$consulta = "SELECT * FROM vendedores";
-$resultado = mysqli_query($bd, $consulta);
+//Consulta Para obtener todos los vendedores
+$vendedores = Vendedor::all();
 
 //Arreglo con mensaje de errores
-
 $errores = Propiedad::getErrores();
 
 
@@ -37,25 +33,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $argc = $_POST['propiedad'];
 
     $propiedad->sincronizar($argc);
-
+    
     //Validación 
     $errores = $propiedad->validar();
 
+    
+    /* SUBIDA DE ARCHIVO IMAGEN */         
     //!generar un nombre único
-    $nombreImagen = md5(uniqid(rand() . true)) . ".jpg";
-
-    //Subida de Archivo
-    if ($_FILES['propiedad']['tmp_name']['imagen']) {
-        $image = Image::make($_FILES['propiedad']['tmp_name']['imagen'])->fit(800, 600);
+    $nombreImagen = md5(uniqid(rand() . true)) . ".jpg";    
+    //*Setea la Imagen
+    //*Realiza un rezise a la imagen con Intervention
+    if($_FILES['propiedad']['tmp_name']['imagen']){
+        $image = Image::make ($_FILES['propiedad']['tmp_name']['imagen'])->fit(800,600);
         $propiedad->setImagen($nombreImagen);
     }
 
 
     if (empty($errores)) {
+
         //Almacenar la Imagen
-        $image->save(CARPETA_IMAGENES . $nombreImagen);
-
-
+        if($_FILES['propiedad']['tmp_name']['imagen']){
+        $image->save (CARPETA_IMAGENES . $nombreImagen);
+        }
+        
         $propiedad->guardar();
     }
 }
